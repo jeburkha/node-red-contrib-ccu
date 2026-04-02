@@ -17,8 +17,15 @@ module.exports = function (RED) {
             this.ccu.register(this);
 
             this.on('input', (message, send, done) => {
-                this.ccu.regaPoll(); // TODO catch errors
-                done();
+                this.ccu.regaPoll()
+                    .then(() => {
+                        this.status({fill: 'green', shape: 'dot', text: 'connected'});
+                        done();
+                    })
+                    .catch(error => {
+                        this.status({fill: 'red', shape: 'dot', text: 'error'});
+                        done(error);
+                    });
             });
         }
 
